@@ -1,0 +1,49 @@
+//user wants to access blob from databricks
+
+val containerName = "container01"
+val storageAccountName = "azuresnowflake001"
+val sas = "sp=racwdli&st=2022-11-04T20:37:06Z&se=2022-12-05T04:37:06Z&spr=https&sv=2021-06-08&sr=c&sig=TrOTBu9NHV%2FAIGB4nCQa6JbXiht3PrpQqqS%2F54VLB6w%3D"
+val config = "fs.azure.sas." + containerName+ "." + storageAccountName + ".blob.core.windows.net"
+
+
+dbutils.fs.mount(
+  source = "wasbs://container01@azuresnowflake001.blob.core.windows.net/Emp.csv",
+  mountPoint = "/mnt/myfile2",
+  extraConfigs = Map(config -> sas))
+
+val mydf = spark.read.option("header","true").option("inferSchema", "true").csv("/mnt/myfile2")
+
+// display(mydf)
+
+
+
+dbutils.fs.mount(
+  source = "wasbs://container01@azuresnowflake001.blob.core.windows.net/BasicDataSet_v0.User_v1.json",
+  mountPoint = "/mnt/myfile3",
+  extraConfigs = Map(config -> sas))
+
+
+
+// val mydf2 = spark.read.json("/mnt/myfile3")
+val mydf3 = spark.read.option("multiline","true")
+      .json("/mnt/myfile3")
+
+
+mydf3.select($"*").orderBy($"id".desc).limit(1).show()
+
+
+
+
+
+
+
+
+
+
+ans
+
++--------------------+--------------+--------+--------------------+--------------------+--------------------+-----------------+----------+-----------+-----------------------+-------------+--------------------+-------+--------------------+---------------+---------+--------------------+--------------------+--------------------+--------------------+---------+---------------------------+--------------------+------------+-----------+--------------------+--------------+---------------------+--------------------------+----------------------------+---------------------+---------------+-------+----------------+--------------------+----------+-----------------+-------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+-----+--------------------+---------+-------------+--------------------+--------+-------+
+|             aboutMe|accountEnabled|ageGroup|    assignedLicenses|       assignedPlans|            birthday|   businessPhones|      city|companyName|consentProvidedForMinor|      country|     createdDateTime|datarow|          department|    displayName|givenName|            hireDate|                  id|         imAddresses|           interests| jobTitle|legalAgeGroupClassification|                mail|mailNickname|mobilePhone|              mySite|officeLocation|onPremisesImmutableId|onPremisesLastSyncDateTime|onPremisesSecurityIdentifier|onPremisesSyncEnabled|pAdditionalInfo|pagerow|passwordPolicies|        pastProjects|postalCode|preferredLanguage|preferredName|    provisionedPlans|      proxyAddresses|             ptenant|               puser|    responsibilities|      rowinformation|             schools|              skills|state|       streetAddress|  surname|usageLocation|   userPrincipalName|userType|userrow|
++--------------------+--------------+--------+--------------------+--------------------+--------------------+-----------------+----------+-----------+-----------------------+-------------+--------------------+-------+--------------------+---------------+---------+--------------------+--------------------+--------------------+--------------------+---------+---------------------------+--------------------+------------+-----------+--------------------+--------------+---------------------+--------------------------+----------------------------+---------------------+---------------+-------+----------------+--------------------+----------+-----------------+-------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+-----+--------------------+---------+-------------+--------------------+--------+-------+
+|Before becoming P...|          true|    null|[{[], 3d957427-ec...|[{2021-02-11T22:4...|2021-12-18T00:00:00Z|[+1 502 555 0144]|Louisville|       null|                   null|United States|2021-02-02T16:54:41Z|      0|Executive Management|Patti Fernandez|    Patti|0001-01-01T00:00:00Z|0409a7eb-588d-487...|[PattiF@M365x7238...|[Painting, Restor...|President|                       null|PattiF@M365x72384...|      PattiF|       null|https://m365x7238...|       15/1102|                 null|                      null|                        null|                 null|           null|      0|            null|[Annual Executive...|     40223|            en-US|             |[{Enabled, Succes...|[SMTP:PattiF@M365...|027d8585-9664-42e...|0409a7eb-588d-487...|[Annual Report, C...|{null, false, fal...|[University of Ch...|[Effective Presen...|   KY|9900 Corporate Ca...|Fernandez|           US|PattiF@M365x72384...|  Member|      0|
++--------------------+--------------+--------+--------------------+--------------------+--------------------+-----------------+----------+-----------+-----------------------+-------------+--------------------+-------+--------------------+---------------+---------+--------------------+--------------------+--------------------+--------------------+---------+---------------------------+--------------------+------------+-----------+--------------------+--------------+---------------------+--------------------------+----------------------------+---------------------+---------------+-------+----------------+--------------------+----------+-----------------+-------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+-----+--------------------+---------+-------------+--------------------+--------+-------+
